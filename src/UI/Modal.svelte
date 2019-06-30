@@ -1,98 +1,76 @@
 <script>
+    import { createEventDispatcher } from 'svelte';
     import Button from '../UI/Button.svelte';
-    import { createEventDispatcher, onMount, onDestroy, beforeUpdate, afterUpdate } from 'svelte';
 
     const dispatch = createEventDispatcher();
-    let agreed = false;
-    let autoScroll = false;
 
-    onMount(() => {
-        console.log('onMount');
-    });
+    export let title;
 
-    onDestroy(() => {
-        console.log('onDestroy');
-    });
-
-    beforeUpdate(() => {
-        console.log('beforeUpdate');
-        autoScroll = agreed;
-    });
-
-    afterUpdate(() => {
-        console.log('afterUpdate');
-        if (autoScroll) {
-            const modal = document.querySelector('.modal');
-            modal.scrollTo(0, modal.scrollHeight);
-        }
-    });
-
-
-
+    function closeModal() {
+        dispatch('cancel');
+    }
 
 </script>
 
 <style>
-    .backdrop {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        background-color: #000;
-        opacity: 0.6;
-        z-index: 1;
+
+    .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 10;
     }
 
     .modal {
-        position: fixed;
-        top: 10vh;
-        left: 0;
-        right: 0;
-        width: 60%;
-        height: 15vh;
-        padding: 1rem;
-        z-index: 2;
-        margin: 0 auto;
-        background-color: white;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.26);
-        border-radius: 4px;
-        overflow-y: scroll;
+    position: fixed;
+    top: 10vh;
+    left: 10%;
+    width: 80%;
+    max-height: 80vh;
+    background: white;
+    border-radius: 5px;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+    overflow: scroll;
     }
 
-    .spacer {
-        margin: 20px 2px;
-        height: 2px;
-        background-color: #eee;
+    h1 {
+    padding: 1rem;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    font-family: 'Roboto Slab', sans-serif;
+    }
+
+    .content {
+    padding: 1rem;
+    }
+
+    footer {
+    padding: 1rem;
+    }
+
+    @media (min-width: 768px) {
+    .modal {
+        width: 40rem;
+        left: calc(50% - 20rem);
+    }
     }
 
 </style>
 
 
-<div on:click="{() => dispatch('dismiss')}" class="backdrop"></div>
+<div class="modal-backdrop" on:click={closeModal}></div>
 <div class="modal">
-    <header>
-        <slot name="header">
-            <h2>Testing</h2>
-        </slot>
-    </header>
-    <div class="spacer"></div>
-    <div class="content"></div>
-    <div class="disclaimer">
-        <p>Before you close, you need to agree to our terms!</p>
-        <Button on:click="{() => agreed = true}" caption="Agree" />
+    <h1>{title}</h1>
+    <div class="content">
+        <slot />
     </div>
     <footer>
-        <slot name="footer" didAgree={agreed}>
-            <Button
-             caption="Check"
-             on:click="{() => dispatch('normal')}"
-             disabled={!agreed}
-             />
+        <slot name="footer">
+            <Button on:click={closeModal}>Close</Button>
         </slot>
-        <Button
-         on:click="{() => dispatch('cancel')}"
-         caption="Cancel"
-        />
     </footer>
 </div>

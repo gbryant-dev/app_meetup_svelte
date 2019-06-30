@@ -6,16 +6,9 @@
     import Button from  './UI/Button.svelte';
     import Modal from './UI/Modal.svelte';
 
-    import { tick } from 'svelte';
-
-    // let showModal = false;
-    // let closable = false;
-    // let text = 'This is some dummy text';
-    // let editedMeetup = {};
 
     let editMode = false;
     let editState = 'update';
-    // let editing = {};
 
     let meetup = {
         id: null,
@@ -52,30 +45,6 @@
 
     ];
 
-    // function transform(event) {
-
-    //     if (event.which !== 9) {
-    //         return;
-    //     }
-
-    //     event.preventDefault();
-
-    //     const selectionStart = event.target.selectionStart;
-    //     const selectionEnd = event.target.selectionEnd;
-    //     const value = event.target.value
-
-    //     text = value.slice(0, selectionStart) +
-    //     value.slice(selectionStart, selectionEnd).toUpperCase() +
-    //     value.slice(selectionEnd);
-
-    //     tick().then(
-    //         () => {
-    //             event.target.selectionStart = selectionStart;
-    //             event.target.selectionEnd = selectionEnd;
-    //         }
-    //     );
-
-    // }
 
     function createMeetup() {
         editMode = true;
@@ -106,6 +75,10 @@
         console.log('Editing!', meetup);
     }
 
+    function cancelEdit () {
+        editMode = false;
+    }
+
 
 </script>
 
@@ -123,33 +96,12 @@
 
 <main>
 
-    <!-- <Button caption="Show Modal" on:click="{(event) => {showModal = true}}"/>
-    {#if showModal}
-        <Modal
-        on:dismiss={(event) => showModal = false}
-        on:cancel={(event) => showModal = false}
-        on:normal={(event) => showModal = false}
-        let:didAgree={closable}
-        >
-        <div slot="footer">
-        <Button
-         caption="Confirm"
-         disabled={!closable}
-         on:click={() => {showModal = false}}
-        />
-        </div>
-
-        </Modal>
-    {/if} -->
-
-    <!-- <textarea on:keydown={transform} value="{text}" rows="5"></textarea> -->
-
     {#if editMode}
         <MeetupEdit
             {meetup}
             state={editState}
             on:save="{addMeetup}"
-            on:cancel="{() => {editMode = false}}"
+            on:cancel="{cancelEdit}"
             />
     {/if}
 
